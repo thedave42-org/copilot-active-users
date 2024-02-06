@@ -36,7 +36,7 @@ jobs:
       with:
         script: |
           const issue_number = context.issue.number;
-          const response = "${{ steps.call-api.outputs.response }}";
+          const response = '${{ steps.call-api.outputs.response }}';
           if (response.includes("Bad credentials")) {
             github.rest.issues.createComment({
               issue_number: issue_number,
