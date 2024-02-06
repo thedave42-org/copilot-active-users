@@ -17,12 +17,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-
-    - name: Setup GitHub CLI
-      uses: sersoft-gmbh/setup-gh-cli-action@v2.0.0
-
     - name: Get organization name from issue body
       id: get-org
       run: |
@@ -31,26 +25,40 @@ jobs:
 
     - name: Call GitHub API
       id: call-api
+      env: 
+        GH_TOKEN: ${{ github.token }}
       run: |
         RESPONSE=$(gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /orgs/${{ steps.get-org.outputs.org }}/copilot/billing/seats || echo "error")
         echo "response=$RESPONSE" >> "$GITHUB_OUTPUT"
 
     - name: Post comment
-      uses: actions/github-script@v5
+      uses: actions/github-script@v7.0.1
       with:
         script: |
           const issue_number = context.issue.number;
           const response = `${{ steps.call-api.outputs.response }}`;
-          github.rest.issues.createComment({
-            issue_number: issue_number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: response.includes("error") ? `Error: ${response}` : `Successful API call. Copilot users: ${response}`
-          });
+          if (!response.includes("error")) {
+            const fs = require('fs');
+            fs.writeFileSync('response.json', response);
+            github.rest.issues.createComment({
+              issue_number: issue_number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `Successful API call. Copilot users: ${response}`,
+              attachments: ['response.json']
+            });
+          } else {
+            github.rest.issues.createComment({
+              issue_number: issue_number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `Error: ${response}`
+            });
+          }
 
     - name: Handle failure
       if: ${{ failure() }}
-      uses: actions/github-script@v5
+      uses: actions/github-script@v7.0.1
       with:
         script: |
           const issue_number = context.issue.number;
@@ -62,11 +70,10 @@ jobs:
             repo: context.repo.repo,
             body: `Step "${failedStep}" failed with reason: ${failedReason}`
           });
-
-          
+ 
     - name: Close issue
       if: ${{ always()}}
-      uses: actions/github-script@v5
+      uses: actions/github-script@v7.0.1
       with:
         script: |
           const issue_number = context.issue.number;
