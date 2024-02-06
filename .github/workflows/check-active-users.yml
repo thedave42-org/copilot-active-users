@@ -37,14 +37,14 @@ jobs:
         script: |
           const fs = require('fs');
           const response = '${{ steps.call-api.outputs.response }}';
-          fs.writeFileSync('response.json', response);
+          fs.writeFileSync('copilot-user-list.json', response);
 
     - name: Upload response file as artifact
       uses: actions/upload-artifact@v4.3.1
       id: uploaded-artifact
       with:
         name: Copilot-User-List
-        path: response.json
+        path: copilot-user-list.json
         if-no-files-found: error
 
     - name: Post comment
@@ -82,10 +82,6 @@ jobs:
               body: `User list has been successfully retrieved.  You can access the list [here](${{ steps.uploaded-artifact.outputs.artifact-url }}).`,
             });
           }
-
-
-
-    
  
     - name: Post failure comment
       if: ${{ failure() }}
