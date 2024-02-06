@@ -28,7 +28,7 @@ jobs:
       env: 
           GH_TOKEN: ${{ secrets.COPILOT_ACCESS_LIST }}
       run: |
-        { RESPONSE=$(gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /orgs/${{ steps.get-org.outputs.org }}/copilot/billing/seats 2>&1 1>&3-) ;} 3>&1
+        ({ RESPONSE=$(gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /orgs/${{ steps.get-org.outputs.org }}/copilot/billing/seats 2>&1 1>&3-) ;} 3>&1 || echo "error: $RESPONSE") | tee /dev/stderr))
         echo "response=$RESPONSE" >> "$GITHUB_OUTPUT"
 
     - name: Post comment
