@@ -28,7 +28,7 @@ jobs:
       env: 
         GH_TOKEN: ${{ secrets.COPILOT_ACCESS_LIST }}
       run: |
-        RESPONSE=$(gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /orgs/octodemo/copilot/billing/seats 2>&1 | tr -d '\t\n' || true)
+        RESPONSE=$(gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /orgs/octodemo/copilot/billing/seats 2>&1 || true)
         echo "response=$RESPONSE" >> "$GITHUB_OUTPUT"
 
     - name: Post comment
