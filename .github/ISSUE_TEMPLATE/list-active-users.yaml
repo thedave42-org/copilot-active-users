@@ -1,0 +1,17 @@
+name: List Copilot Users
+description: Request a list of Copilot users for a specific organization
+title: "List Copilot Users"
+labels: ["copilot-users"]
+body:
+- type: markdown
+  attributes:
+    value: |
+      ## Organization Name
+- type: input
+  id: organization-name
+  attributes:
+    label: Organization Name
+    description: Enter the name of the organization for which you want to list the Copilot users
+    placeholder: e.g., octocat
+  validations:
+    required: true

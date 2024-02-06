@@ -1,0 +1,65 @@
+# Create an actions workflow that uses the gh cli to call the GitHub API and retrieve the list of copilot users
+# for a specified organization
+# Trigger the workflow when a new issue with the subject "List Copilot Users" is created in the repo where this workflow lives
+# The github cli will call the api using the command gh api -H "Accept: application/vnd.github+json"-H "X-GitHub-Api-Version: 2022-11-28" /orgs/ORG/copilot/billing/seats
+# it will replace the ORG placeholder with the organization name specified in the issue body
+# if the CLI call fails the error message will be captured and posted as a comment in the issue
+# if the CLI call is successful the list of copilot users will be attached as a json file to a comment in the issue
+name: List Copilot Users
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  list-users:
+    if: github.event.issue.title == 'List Copilot Users'
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Setup GH CLI
+      run: |
+        sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-key C99B11DEB97541F0
+        sudo apt-add-repository https://cli.github.com/packages
+        sudo apt update
+        sudo apt install gh
+
+    - name: Get organization name from issue body
+      id: get-org
+      run: |
+        ORG=$(echo "${{ github.event.issue.body }}" | awk 'NR==1{print $1}')
+        echo "::set-output name=org::$ORG"
+
+    - name: Call GitHub API
+      id: call-api
+      run: |
+        RESPONSE=$(gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /orgs/${{ steps.get-org.outputs.org }}/copilot/billing/seats || echo "error")
+        echo "response=$RESPONSE" >> "$GITHUB_OUTPUT"
+
+    - name: Post comment
+      uses: actions/github-script@v5
+      with:
+        script: |
+          const issue_number = context.issue.number;
+          const response = `${{ steps.call-api.outputs.response }}`;
+          github.rest.issues.createComment({
+            issue_number: issue_number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: response.includes("error") ? `Error: ${response}` : `Successful API call. Copilot users: ${response}`
+          });
+    
+    - name: Close issue
+      uses: actions/github-script@v5
+      with:
+        script: |
+          const issue_number = context.issue.number;
+          github.rest.issues.update({
+            issue_number: issue_number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            state: "closed"
+          });
