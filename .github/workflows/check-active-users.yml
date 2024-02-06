@@ -52,7 +52,7 @@ jobs:
               issue_number: issue_number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `Error: Bad credentials. Please check that the COPILOT_ACCESS_LIST secret has manage_billing:copilot permission to the organization.`
+              body: `Error: Bad credentials. Please check that the COPILOT_ACCESS_LIST secret has the \`manage_billing:copilot\` permission for the organization.`
             });
           } else if (response.includes("error") && response.includes("HTTP 401")) {
             github.rest.issues.createComment({
