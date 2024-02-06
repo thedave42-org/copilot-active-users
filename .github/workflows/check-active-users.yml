@@ -37,7 +37,6 @@ jobs:
         script: |
           const issue_number = context.issue.number;
           const response = `${{ steps.call-api.outputs.response }}`;
-          const context = require('@actions/github');
           if (!response.includes("error")) {
             const fs = require('fs');
             fs.writeFileSync('response.json', response);
@@ -53,7 +52,7 @@ jobs:
               issue_number: issue_number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `Error: Bad credentials. Please check that the COPILOT_ACCESS_LIST secret has the \`manage_billing:copilot\` permission for the organization.`
+              body: `Error: Bad credentials. Please check that the COPILOT_ACCESS_LIST secret has manage_billing:copilot permission to the organization.`
             });
           } else if (response.includes("error") && response.includes("HTTP 401")) {
             github.rest.issues.createComment({
@@ -62,7 +61,7 @@ jobs:
               repo: context.repo.repo,
               body: `Error: Please check the COPILOT_ACCESS_LIST secret exists and is accessible to this repository.`
             });
-          } else if (response.includes("error")) {
+          } else if (response.includes("error") && ){
             github.rest.issues.createComment({
               issue_number: issue_number,
               owner: context.repo.owner,
