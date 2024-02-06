@@ -47,13 +47,6 @@ jobs:
               body: `Successful API call. Copilot users: ${response}`,
               attachments: ['response.json']
             });
-          } else if (response.includes("Resource not accessible by integration") && response.includes("/rest/copilot")) {
-            github.rest.issues.createComment({
-              issue_number: issue_number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: "You need to create a secret accessible to this repository named COPILOT_ACCESS_LIST that contains a GitHub token with access to copilot administration."
-            });
           } else {
             github.rest.issues.createComment({
               issue_number: issue_number,
