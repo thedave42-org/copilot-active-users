@@ -65,7 +65,7 @@ jobs:
               issue_number: issue_number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `Successful API call. Copilot users: ${response}`,
+              body: `Successful API call. User list attached.`,
               attachments: ['response.json']
             });
           }
