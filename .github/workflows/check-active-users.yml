@@ -27,7 +27,7 @@ jobs:
       id: get-org
       run: |
         ORG=$(echo "${{ github.event.issue.body }}" | awk 'NR==1{print $1}')
-        echo "::set-output name=org::$ORG"
+        echo "org=$ORG" >> "$GITHUB_OUTPUT"
 
     - name: Call GitHub API
       id: call-api
