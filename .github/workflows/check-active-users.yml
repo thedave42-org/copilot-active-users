@@ -61,7 +61,7 @@ jobs:
               repo: context.repo.repo,
               body: `Error: Please check the COPILOT_ACCESS_LIST secret exists and is accessible to this repository.`
             });
-          } else if (response.includes("error") && ){
+          } else if (response.includes("error")){
             github.rest.issues.createComment({
               issue_number: issue_number,
               owner: context.repo.owner,
