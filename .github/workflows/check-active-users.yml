@@ -20,8 +20,8 @@ jobs:
     - name: Get organization name from issue body
       id: get-org
       run: |
-        ORG=$(echo "${{ github.event.issue.body }}" | awk 'NR==1{print $1}')
-        echo "org=$ORG" >> "$GITHUB_OUTPUT"
+        ORG=$(echo "${{ github.event.issue.body }}" | awk '/### Organization Name/{getline; getline; print}')
+        echo "org=$ORG" >> "$GITHUB_ENV"
 
     - name: Call GitHub API
       id: call-api
