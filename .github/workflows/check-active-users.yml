@@ -47,7 +47,7 @@ jobs:
               body: `Successful API call. Copilot users: ${response}`,
               attachments: ['response.json']
             });
-          } else if (response.includes("error") && ( response.includes("HTTP 403")) || response.includes() || response.includes("Bad credentials")) {
+          } else if (response.includes("error") && ( response.includes("HTTP 403")) || response.includes("Bad credentials")) {
             github.rest.issues.createComment({
               issue_number: issue_number,
               owner: context.repo.owner,
