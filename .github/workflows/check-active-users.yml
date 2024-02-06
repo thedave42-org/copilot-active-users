@@ -47,8 +47,25 @@ jobs:
             repo: context.repo.repo,
             body: response.includes("error") ? `Error: ${response}` : `Successful API call. Copilot users: ${response}`
           });
-    
+
+    - name: Handle failure
+      if: ${{ failure() }}
+      uses: actions/github-script@v5
+      with:
+        script: |
+          const issue_number = context.issue.number;
+          const failedStep = steps.${{ job.status }}.name;
+          const failedReason = steps.${{ job.status }}.conclusion;
+          github.rest.issues.createComment({
+            issue_number: issue_number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: `Step "${failedStep}" failed with reason: ${failedReason}`
+          });
+
+          
     - name: Close issue
+      if: ${{ always()}}
       uses: actions/github-script@v5
       with:
         script: |
