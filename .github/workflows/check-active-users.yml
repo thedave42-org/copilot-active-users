@@ -32,6 +32,7 @@ jobs:
         JSON=$(echo $RESPONSE | jq '.seats[0]')
         echo "response=$RESPONSE" >> "$GITHUB_OUTPUT"
         echo "$JSON" > output.json
+        echo "json=$JSON" >> "$GITHUB_OUTPUT
 
     - name: JSON to CSV Action
       uses: austenstone/json-to-csv@v1.2
