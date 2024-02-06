@@ -37,24 +37,14 @@ jobs:
         script: |
           const issue_number = context.issue.number;
           const response = "${{ steps.call-api.outputs.response }}";
-          if (!response.includes("error")) {
-            const fs = require('fs');
-            fs.writeFileSync('response.json', response);
-            github.rest.issues.createComment({
-              issue_number: issue_number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: `Successful API call. Copilot users: ${response}`,
-              attachments: ['response.json']
-            });
-          } else if (response.includes("error") && ( response.includes("HTTP 403")) || response.includes("Bad credentials")) {
+          if (response.includes("Bad credentials")) {
             github.rest.issues.createComment({
               issue_number: issue_number,
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: `Error: Bad credentials. Please check that the COPILOT_ACCESS_LIST secret has the \`manage_billing:copilot\` permission for the organization.`
             });
-          } else if (response.includes("error") && response.includes("HTTP 401")) {
+          } else if (response.includes("set the GH_TOKEN environment variable")) {
             github.rest.issues.createComment({
               issue_number: issue_number,
               owner: context.repo.owner,
@@ -68,23 +58,31 @@ jobs:
               repo: context.repo.repo,
               body: `Error: ${response}`
             });
+          } else {
+            const fs = require('fs');
+            fs.writeFileSync('response.json', response);
+            github.rest.issues.createComment({
+              issue_number: issue_number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `Successful API call. Copilot users: ${response}`,
+              attachments: ['response.json']
+            });
           }
-
-    - name: Handle failure
+ 
+    - name: Post failure comment
       if: ${{ failure() }}
       uses: actions/github-script@v7.0.1
       with:
         script: |
           const issue_number = context.issue.number;
-          const failedStep = steps.${{ job.status }}.name;
-          const failedReason = steps.${{ job.status }}.conclusion;
           github.rest.issues.createComment({
             issue_number: issue_number,
             owner: context.repo.owner,
             repo: context.repo.repo,
-            body: `Step "${failedStep}" failed with reason: ${failedReason}`
-          });
- 
+            body: "A step in the workflow failed. Please check the logs for more information."
+          });          
+
     - name: Close issue
       if: ${{ always() }}
       uses: actions/github-script@v7.0.1
@@ -99,6 +97,6 @@ jobs:
           });
 
     - name: Debugging with ssh
-      if: ${{ failure()}}
+      if: ${{ failure() }}
       uses: lhotari/action-upterm@v1
       
