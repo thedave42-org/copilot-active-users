@@ -26,7 +26,7 @@ jobs:
     - name: Call GitHub API
       id: call-api
       env: 
-        GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.COPILOT_ACCESS_LIST }}
       run: |
         RESPONSE=$(gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /orgs/${{ steps.get-org.outputs.org }}/copilot/billing/seats || echo "error")
         echo "response=$RESPONSE" >> "$GITHUB_OUTPUT"
@@ -47,7 +47,21 @@ jobs:
               body: `Successful API call. Copilot users: ${response}`,
               attachments: ['response.json']
             });
-          } else {
+          } else if (response.includes("error") && response.includes("HTTP 403")) {
+            github.rest.issues.createComment({
+              issue_number: issue_number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `Error: Bad credentials. Please check that the COPILOT_ACCESS_LIST secret has the \`manage_billing:copilot\` permission for the organization.`
+            });
+          } else if (response.includes("error") && response.includes("HTTP 401")) {
+            github.rest.issues.createComment({
+              issue_number: issue_number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `Error: Please check the COPILOT_ACCESS_LIST secret exists and is accessible to this repository.`
+            });
+          } else if (response.includes("error") && ){
             github.rest.issues.createComment({
               issue_number: issue_number,
               owner: context.repo.owner,
