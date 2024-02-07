@@ -79,6 +79,30 @@ jobs:
             });
           }
  
+    - name: Read CSV
+      id: csv
+      uses: juliangruber/read-file-action@v1
+      with:
+        path: copilot-user-list.csv
+        
+    - name: Create MD
+      uses: petems/csv-to-md-table-action@master
+      id: csv-table-output
+      with:
+        csvinput: ${{ steps.csv.outputs.content }} 
+        
+    - name: Post failure comment
+      uses: actions/github-script@v7.0.1
+      with:
+        script: |
+          const issue_number = context.issue.number;
+          github.rest.issues.createComment({
+            issue_number: issue_number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: "${{steps.csv-table-output.outputs.markdown-table}}"
+          });  
+    
     - name: Post failure comment
       if: ${{ failure() }}
       uses: actions/github-script@v7.0.1
