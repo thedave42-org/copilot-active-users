@@ -96,11 +96,12 @@ jobs:
       with:
         script: |
           const issue_number = context.issue.number;
+          const mdtable = "${{steps.csv-table-output.outputs.markdown-table}}";
           github.rest.issues.createComment({
             issue_number: issue_number,
             owner: context.repo.owner,
             repo: context.repo.repo,
-            body: "${{steps.csv-table-output.outputs.markdown-table}}"
+            body: mdtable
           });  
     
     - name: Post failure comment
