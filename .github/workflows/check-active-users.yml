@@ -86,7 +86,7 @@ jobs:
         path: copilot-user-list.csv
         
     - name: Create MD
-      uses: petems/csv-to-md-table-action@master
+      uses: petems/csv-to-md-table-action@v3.0.0
       id: csv-table-output
       with:
         csvinput: ${{ steps.csv.outputs.content }} 
