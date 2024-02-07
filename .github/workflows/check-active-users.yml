@@ -55,7 +55,9 @@ jobs:
       id: uploaded-artifact
       with:
         name: Copilot-User-List
-        path: copilot-user-list.json, copilot-user-list.csv
+        path: |
+          copilot-user-list.json
+          copilot-user-list.csv
         if-no-files-found: error
 
     - name: Post comment
