@@ -103,7 +103,7 @@ jobs:
             issue_number: issue_number,
             owner: context.repo.owner,
             repo: context.repo.repo,
-            body: `<details><summary>Click to view the user list</summary>\n\n\`\`\`csv\n${mdtable}\n\`\`\`\n\n</details>`
+            body: `<details><summary>Click to view the user list</summary>\n\n${mdtable}\n\n</details>`
           });  
     
     - name: Post failure comment
