@@ -43,7 +43,7 @@ jobs:
           copilot-user-list.csv
         if-no-files-found: error
 
-    - name: Post comment
+    - name: Post data results comment
       uses: actions/github-script@v7.0.1
       with:
         script: |
@@ -91,7 +91,7 @@ jobs:
       with:
         csvinput: ${{ steps.csv.outputs.content }} 
         
-    - name: Post failure comment
+    - name: Post user list as comment
       uses: actions/github-script@v7.0.1
       with:
         script: |
