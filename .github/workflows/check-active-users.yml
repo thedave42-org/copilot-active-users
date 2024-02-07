@@ -96,7 +96,7 @@ jobs:
       with:
         script: |
           const issue_number = context.issue.number;
-          const mdtable = "${{steps.csv-table-output.outputs.markdown-table}}";
+          const mdtable = encodeURI("${{steps.csv-table-output.outputs.markdown-table}}");
           github.rest.issues.createComment({
             issue_number: issue_number,
             owner: context.repo.owner,
