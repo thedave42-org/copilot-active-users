@@ -30,23 +30,24 @@ jobs:
       run: |
         RESPONSE=$(gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /orgs/octodemo/copilot/billing/seats 2>&1 | tr -d '\n' || true)
         echo "response=$RESPONSE" >> "$GITHUB_OUTPUT"
+        echo ($echo $RESPONSE | jq -j '.seats') > copilot-user-list.json
 
-    - name: JSON to CSV Action
-      uses: austenstone/json-to-csv@v1.2
-      id: csv
-      with:
-        json: ${{ fromJson(steps.call-api.outputs.response) }}
+    # - name: JSON to CSV Action
+    #   uses: austenstone/json-to-csv@v1.2
+    #   id: csv
+    #   with:
+    #     json: ${{ steps.call-api.outputs.json }}
     
       
-    - name: Save response to file
-      uses: actions/github-script@v7.0.1
-      with:
-        script: |
-          const fs = require('fs');
-          const json = '${{ steps.call-api.outputs.response }}';
-          const csv = '${{ steps.csv.outputs.csv }}';
-          fs.writeFileSync('copilot-user-list.json', json);
-          fs.writeFileSync('copilot-user-list.csv', csv);
+    # - name: Save response to file
+    #   uses: actions/github-script@v7.0.1
+    #   with:
+    #     script: |
+    #       const fs = require('fs');
+    #       const json = '${{ steps.call-api.outputs.response }}';
+    #       const csv = '${{ steps.csv.outputs.csv }}';
+    #       fs.writeFileSync('copilot-user-list.json', json);
+    #       fs.writeFileSync('copilot-user-list.csv', csv);
 
     - name: Upload response file as artifact
       uses: actions/upload-artifact@v4.3.1
