@@ -93,13 +93,15 @@ jobs:
         
     - name: Post user list as comment
       uses: actions/github-script@v7.0.1
+      env:
+        MD_TABLE: ${{ steps.csv-table-output.outputs.markdown-table }}
       with:
         script: |
           function addslashes( str ) {
             return (str + '').replace(/[\\"']/g, '\\$&').replace(/\u0000/g, '\\0');
           }
           const issue_number = context.issue.number;
-          const mdtable = addslashes("${{steps.csv-table-output.outputs.markdown-table}}");
+          const mdtable = process.env.MD_TABLE;
           github.rest.issues.createComment({
             issue_number: issue_number,
             owner: context.repo.owner,
