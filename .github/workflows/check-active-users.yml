@@ -25,7 +25,7 @@ jobs:
       with:
         script: |
           const issue_number = context.issue.number;
-          const issue_creator = github.actor;
+          const issue_creator = '${{ github.actor }}';
           console.log(issue_creator);
           github.rest.issues.addAssignees({
             owner: context.repo.owner,
