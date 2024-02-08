@@ -25,6 +25,13 @@ jobs:
       with:
         script: |
           const issue_number = context.issue.number;
+          const issue_creator = context.issue.user.login;
+          github.rest.issues.addAssignees({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: issue_number,
+            assignees: [issue_creator]
+          });          
           github.rest.issues.removeLabel({
             owner: context.repo.owner,
             repo: context.repo.repo,
@@ -88,18 +95,6 @@ jobs:
             repo: context.repo.repo,
             body: `User list has been successfully retrieved.  You download both the CSV and JSON format of the data [here](${{ steps.uploaded-artifact.outputs.artifact-url }}).`,
           });
-          github.rest.issues.removeLabel({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: issue_number,
-              name: 'query-processing'
-          });
-          github.rest.issues.addLabels({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: issue_number,
-              labels: ['query-succeeded']
-          });
 
     - name: Read CSV
       id: csv
@@ -126,7 +121,19 @@ jobs:
             owner: context.repo.owner,
             repo: context.repo.repo,
             body: `<details><summary>Click to view the user list</summary>\n\n${mdtable}\n\n</details>`
-          });  
+          }); 
+          github.rest.issues.removeLabel({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue_number,
+              name: 'query-processing'
+          });
+          github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue_number,
+              labels: ['query-succeeded']
+          });           
     
     - name: Post failure comment
       if: ${{ failure() }}
