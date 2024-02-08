@@ -37,7 +37,7 @@ jobs:
         script: |
           const issue_number = context.issue.number;
           const response = '${{ steps.call-api.outputs.response }}';
-          if (response.includes("Bad credentials")) {
+          if (response.includes("Bad credentials") || response.includes("Not Found")) {
             github.rest.issues.createComment({
               issue_number: issue_number,
               owner: context.repo.owner,
@@ -143,7 +143,7 @@ jobs:
             state: "closed"
           });
 
-    - name: Debugging with ssh
-      if: ${{ failure() }}
-      uses: lhotari/action-upterm@v1
+    # - name: Debugging with ssh
+    #   if: ${{ failure() }}
+    #   uses: lhotari/action-upterm@v1
       
