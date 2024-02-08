@@ -37,12 +37,13 @@ jobs:
         script: |
           const issue_number = context.issue.number;
           const response = '${{ steps.call-api.outputs.response }}';
+          const org = = '${{ steps.get-org.outputs.org }}';
           if (response.includes("Bad credentials") || response.includes("Not Found")) {
             github.rest.issues.createComment({
               issue_number: issue_number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `Error: Bad credentials. Please check that the COPILOT_ACCESS_LIST secret has the \`manage_billing:copilot\` permission for the organization.`
+              body: `Error: Bad credentials - the credentials used do not have access to \`${org}\` .\n\nPlease check that the \`COPILOT_ACCESS_LIST\` secret contains a valid classic PAT, and that it has the \`manage_billing:copilot\` permission for the organization.`
             });
           } else if (response.includes("set the GH_TOKEN environment variable")) {
             github.rest.issues.createComment({
