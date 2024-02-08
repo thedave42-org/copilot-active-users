@@ -30,19 +30,7 @@ jobs:
       run: |
         RESPONSE=$(gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /orgs/${{ steps.get-org.outputs.org }}/copilot/billing/seats 2>&1 | tr -d '\n' || true)
         echo "response=$RESPONSE" >> "$GITHUB_OUTPUT"
-        echo $(echo $RESPONSE | jq -j '.seats') > copilot-user-list.json
-        cat copilot-user-list.json | jq -r '(. | map(leaf_paths) | unique) as $cols | map (. as $row | ($cols | map(. as $col | $row | getpath($col)))) as $rows | ([($cols | map(. | map(tostring) | join(".")))] + $rows) | map(@csv) | .[]' > copilot-user-list.csv
     
-    - name: Upload response file as artifact
-      uses: actions/upload-artifact@v4.3.1
-      id: uploaded-artifact
-      with:
-        name: Copilot-User-List
-        path: |
-          copilot-user-list.json
-          copilot-user-list.csv
-        if-no-files-found: error
-
     - name: Post data results comment
       uses: actions/github-script@v7.0.1
       with:
@@ -79,6 +67,23 @@ jobs:
             });
           }
  
+    - name: Save data as file
+      env:
+        RESPONSE: ${{ steps.call-api.outputs.response }}
+      run: |
+        echo $(echo $RESPONSE | jq -j '.seats') > copilot-user-list.json
+        cat copilot-user-list.json | jq -r '(. | map(leaf_paths) | unique) as $cols | map (. as $row | ($cols | map(. as $col | $row | getpath($col)))) as $rows | ([($cols | map(. | map(tostring) | join(".")))] + $rows) | map(@csv) | .[]' > copilot-user-list.csv
+    
+    - name: Upload response file as artifact
+      uses: actions/upload-artifact@v4.3.1
+      id: uploaded-artifact
+      with:
+        name: Copilot-User-List
+        path: |
+          copilot-user-list.json
+          copilot-user-list.csv
+        if-no-files-found: error
+
     - name: Read CSV
       id: csv
       uses: juliangruber/read-file-action@v1
