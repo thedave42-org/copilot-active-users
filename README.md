@@ -1,5 +1,5 @@
-# Copilot: User list
-This repository will generate a list of the current Copilot for Business users for an Organization.  You can create a GitHub Issue in this repo that will trigger the retrieval of the list of Copilot for Business users from the GitHub REST API and provide that information as a file available from a comment added to that same Issue.
+# Copilot User list
+This repository will generate a list of the current Copilot for Business users for an Organization.  It retrieves that information from the [Copilot Management API](https://docs.github.com/en/rest/copilot/copilot-business?apiVersion=2022-11-28#list-all-copilot-business-seat-assignments-for-an-organization). You can create a GitHub Issue in this repo that will trigger the retrieval of the list of Copilot for Business users from the GitHub REST API and provide that information as a file available from a comment added to that same Issue.
 
 ### Setup
 To get started you can fork the repo and enable the ability to run Action workflows.  The workflow requires a GitHub classic PAT defined as an Actions Secret and available to this workflow named `COPILOT_ACCESS_LIST`.  The PAT should have the permission `manage_billing:copilot`. 

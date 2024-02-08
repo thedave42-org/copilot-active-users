@@ -43,14 +43,14 @@ jobs:
               issue_number: issue_number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `Error: Bad credentials - the credentials used do not have access to \`${org}\` .\n\nPlease check that the \`COPILOT_ACCESS_LIST\` secret contains a valid classic PAT, and that it has the \`manage_billing:copilot\` permission for the organization.`
+              body: `Error: Bad credentials - the credentials used do not have access to \`${org}\` .\n\nPlease \[check\]\(../../settings/secrets/actions\) that the \`COPILOT_ACCESS_LIST\` secret contains a valid classic PAT, and that it has the \`manage_billing:copilot\` permission for the organization.`
             });
           } else if (response.includes("set the GH_TOKEN environment variable")) {
             github.rest.issues.createComment({
               issue_number: issue_number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `Error: Please check the COPILOT_ACCESS_LIST secret exists and is accessible to this repository.`
+              body: `Error: Please \[check\]\(../../settings/secrets/actions\) the COPILOT_ACCESS_LIST secret exists and is accessible to this repository.`
             });
           } else if (response.includes("error")){
             github.rest.issues.createComment({
