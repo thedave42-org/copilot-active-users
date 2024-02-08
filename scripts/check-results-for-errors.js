@@ -42,5 +42,5 @@ module.exports = ({ github, context }) => {
         });
         throw new Error(body);
     }
-    return context.payload.client_payload.value;
+    return true;
 };
