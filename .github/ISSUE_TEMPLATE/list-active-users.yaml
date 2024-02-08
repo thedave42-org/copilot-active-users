@@ -1,7 +1,7 @@
 name: List Copilot Users
 description: Request a list of Copilot users for a specific organization
 title: "List Copilot Users"
-labels: ["copilot-users"]
+labels: ["query-sent"]
 body:
 - type: markdown
   attributes:
