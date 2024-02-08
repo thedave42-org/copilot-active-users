@@ -37,7 +37,7 @@ jobs:
         script: |
           const issue_number = context.issue.number;
           const response = '${{ steps.call-api.outputs.response }}';
-          const org = = '${{ steps.get-org.outputs.org }}';
+          const org = '${{ steps.get-org.outputs.org }}';
           if (response.includes("Bad credentials") || response.includes("Not Found")) {
             github.rest.issues.createComment({
               issue_number: issue_number,
