@@ -12,6 +12,6 @@ body:
   attributes:
     label: Organization Name
     description: Enter the name of the organization for which you want to list the Copilot users
-    placeholder: octodemo
+    placeholder: "e.g. octocat"
   validations:
     required: true
