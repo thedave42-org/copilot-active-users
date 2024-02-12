@@ -115,7 +115,7 @@ jobs:
       with:
         script: |
           const issue_number = context.issue.number;
-          const md_table = fs.readFileSync('copilot-user-list.md');
+          const md_table = require('fs').readFileSync('copilot-user-list.md');
           github.rest.issues.createComment({
             issue_number: issue_number,
             owner: context.repo.owner,
