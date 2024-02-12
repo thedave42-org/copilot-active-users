@@ -87,7 +87,6 @@ jobs:
       with:
         script: |
           const issue_number = context.issue.number;
-          const response = '${{ steps.call-api.outputs.response }}';
           github.rest.issues.createComment({
             issue_number: issue_number,
             owner: context.repo.owner,
@@ -109,8 +108,6 @@ jobs:
         
     - name: Post user list as comment
       uses: actions/github-script@v7.0.1
-      env:
-        MD_TABLE: ${{ steps.csv-table-output.outputs.markdown-table }}
       with:
         script: |
           const issue_number = context.issue.number;
@@ -119,7 +116,7 @@ jobs:
             issue_number: issue_number,
             owner: context.repo.owner,
             repo: context.repo.repo,
-            body: `<details><summary>Click to view the user list</summary>\n\n${mdtable}\n\n</details>`
+            body: '<details><summary>Click to view the user list</summary>\n\n${{ steps.csv-table-output.outputs.markdown-table }}\n\n</details>'
           }); 
           github.rest.issues.removeLabel({
               owner: context.repo.owner,
