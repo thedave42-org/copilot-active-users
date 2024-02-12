@@ -105,13 +105,17 @@ jobs:
       id: csv-table-output
       with:
         csvinput: ${{ steps.csv.outputs.content }} 
+    
+    - name: Save MD as file
+      run: |
+        echo "${{ steps.csv-table-output.outputs.markdown-table }}" > copilot-user-list.md
         
     - name: Post user list as comment
       uses: actions/github-script@v7.0.1
       with:
         script: |
           const issue_number = context.issue.number;
-          const md_table = ${{ steps.csv-table-output.outputs.markdown-table }};
+          const md_table = fs.readFileSync('copilot-user-list.md');
           github.rest.issues.createComment({
             issue_number: issue_number,
             owner: context.repo.owner,
