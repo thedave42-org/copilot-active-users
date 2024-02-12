@@ -111,12 +111,12 @@ jobs:
       with:
         script: |
           const issue_number = context.issue.number;
-          const mdtable = process.env.MD_TABLE;
+          const md_table = ${{ steps.csv-table-output.outputs.markdown-table }};
           github.rest.issues.createComment({
             issue_number: issue_number,
             owner: context.repo.owner,
             repo: context.repo.repo,
-            body: '<details><summary>Click to view the user list</summary>\n\n${{ steps.csv-table-output.outputs.markdown-table }}\n\n</details>'
+            body: `<details><summary>Click to view the user list</summary>\n\n${md_table}\n\n</details>`
           }); 
           github.rest.issues.removeLabel({
               owner: context.repo.owner,
