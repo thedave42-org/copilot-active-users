@@ -120,7 +120,7 @@ jobs:
             issue_number: issue_number,
             owner: context.repo.owner,
             repo: context.repo.repo,
-            body: `<details><summary>Click to view the user list</summary>\n\n${md_table}\n\n</details>`
+            body: `<details><summary>Click to view the user list.\nComment body could be truncated based on 10k limit.</summary>\n\n${md_table}\n\n</details>`
           }); 
           github.rest.issues.removeLabel({
               owner: context.repo.owner,
