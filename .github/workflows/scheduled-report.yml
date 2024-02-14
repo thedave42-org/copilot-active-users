@@ -54,12 +54,6 @@ jobs:
 
       - id: set-matrix
         run: echo "matrix=$(cat ./config/organizations.json | jq -c '.organizations')" >> "$GITHUB_OUTPUT"
-      
-      - name: Debugging with ssh
-        uses: lhotari/action-upterm@v1
-        with:
-          wait-timeout-minutes: 1
-    
 
   get-user-list:
     needs: get-orgs
@@ -91,6 +85,11 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add ./data/${{ matrix.org }}-*.json
+          git add ./data/${{ matrix.org }}-$(date +%Y%m%d-%H%M%S)-copilot-users.json
           git commit -m "Add data for ${{ matrix.org }} at $(date +%Y%m%d-%H%M%S)"
           git push
+
+      - name: Debugging with ssh
+        uses: lhotari/action-upterm@v1
+        with:
+          wait-timeout-minutes: 1
