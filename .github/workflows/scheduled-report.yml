@@ -51,10 +51,11 @@ jobs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
       - uses: actions/checkout@v3
+
       - id: set-matrix
         run: echo "matrix=$(cat ./config/organizations.json | jq -c '.organizations')" >> "$GITHUB_OUTPUT"
+      
       - name: Debugging with ssh
-        if: failure()
         uses: lhotari/action-upterm@v1
         with:
           wait-timeout-minutes: 1
