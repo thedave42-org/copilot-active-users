@@ -52,7 +52,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - id: set-matrix
-        run: echo "matrix=$(jq -c '.organizations' ./config/organizations.json)" >> "$GITHUB_OUTPUT"
+        run: echo "matrix=$(cat ./config/organizations.json | jq -c '.organizations')" >> "$GITHUB_OUTPUT"
 
   get-user-list:
     needs: get-orgs
