@@ -42,6 +42,7 @@ name: Scheduled Report
 on:
   schedule:
     - cron: '0 0 * * *' # Runs every day at 00:00 UTC
+  workflow_dispatch:
 
 jobs:
   get-orgs:
