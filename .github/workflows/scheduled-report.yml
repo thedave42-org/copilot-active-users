@@ -48,19 +48,22 @@ jobs:
   get-orgs:
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
+      orgs: ${{ steps.set-matrix.outputs.orgs }}
     steps:
       - uses: actions/checkout@v3
 
-      - id: set-matrix
-        run: echo "matrix=$(cat ./config/organizations.json | jq -c '.organizations')" >> "$GITHUB_OUTPUT"
+      - name: Get Organization list
+        id: set-matrix
+        run:  |
+          echo "orgs=$(cat ./config/organizations.json | jq -c '.organizations')" >> "$GITHUB_OUTPUT"
 
   get-user-list:
     needs: get-orgs
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        org: ${{needs.get-orgs.outputs.matrix}}
+        org: ${{ needs.get-orgs.outputs.orgs }}
+
     steps:
       - uses: actions/checkout@v3
       - name: Call GitHub API
