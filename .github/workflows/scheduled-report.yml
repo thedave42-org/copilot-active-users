@@ -1,7 +1,7 @@
 # Create an actions workflow that uses the gh cli to call the GitHub API and retrieve the list of copilot users once a day for a specified organization
 # 1. The workflow should be triggered by a schedule event that runs every day at 00:00 UTC
 # 2. The workflow should have two jobs: the first job will retrieve a list of organizations and the second job will retrieve the list of copilot users for each organization
-# 3. The first job in the workflow is named get-orgs and should checkout the repo using the actions/checkout@v4 
+# 3. The first job in the workflow is named get-orgs and should checkout the repo using the actions/checkout@v4
 # 4. It should retrieve the list of organizations from the file ./config/organizations.json which has the structure:
 # {
 #   "organizations" : [
@@ -15,7 +15,7 @@
 #  here is an example of how to accomplish this that needs to have ORG replaced with the value from the matrix:
 # - name: Call GitHub API
 #   id: call-api
-#   env: 
+#   env:
 #     GH_TOKEN: ${{ secrets.COPILOT_ACCESS_LIST }}
 #   run: |
 #     RESPONSE=$(gh api --paginate -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /orgs/ORG/copilot/billing/seats 2>&1 | tr -d '\n' || true)
@@ -41,7 +41,7 @@ name: Scheduled Report
 
 on:
   schedule:
-    - cron: '0 0 * * *' # Runs every day at 00:00 UTC
+    - cron: "0 0 * * *" # Runs every day at 00:00 UTC
   workflow_dispatch:
 
 jobs:
@@ -49,13 +49,20 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       orgs: ${{ steps.set-matrix.outputs.orgs }}
+      datetime: ${{ steps.datetime.outputs.datetime }}
+
     steps:
       - uses: actions/checkout@v4
 
       - name: Get Organization list
         id: set-matrix
-        run:  |
+        run: |
           echo "orgs=$(cat ./config/organizations.json | jq -c '.organizations')" >> "$GITHUB_OUTPUT"
+
+      - name: Set date and time
+        id: datetime
+        run: |
+          echo "datetime=$(date +%Y%m%d-%H%M%S)" >> "$GITHUB_OUTPUT"
 
   get-user-list:
     needs: get-orgs
@@ -67,14 +74,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set date and time
-        id: datetime
-        run: |
-          echo "datetime=$(date +%Y%m%d-%H%M%S)" >> "$GITHUB_OUTPUT"
-
       - name: Call GitHub API
         id: call-api
-        env: 
+        env:
           GH_TOKEN: ${{ secrets.COPILOT_ACCESS_LIST }}
         run: |
           RESPONSE=$(gh api --paginate -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /orgs/${{ matrix.org }}/copilot/billing/seats 2>&1 | tr -d '\n' || true)
@@ -91,13 +93,13 @@ jobs:
         run: |
           echo $(echo '${{ steps.call-api.outputs.response }}' | jq -j '.seats') > response.json
           cat response.json | jq -n 'reduce inputs as $in (null; . + $in)' > aggregated-response.json
-          cat  aggregated-response.json | jq -r 'map( del(.assignee) + (.assignee | with_entries(.value = .value)) ) | map({login: .login, last_activity_at: .last_activity_at, last_activity_editor: .last_activity_editor, pending_cancellation_date: .pending_cancellation_date, created_at: .created_at, updated_at: .updated_at, type: .type, site_admin: .site_admin, url: .html_url})' > ./data/${{ matrix.org }}-${{ steps.datetime.outputs.datetime }}-copilot-users.json
-      
+          cat  aggregated-response.json | jq -r 'map( del(.assignee) + (.assignee | with_entries(.value = .value)) ) | map({login: .login, last_activity_at: .last_activity_at, last_activity_editor: .last_activity_editor, pending_cancellation_date: .pending_cancellation_date, created_at: .created_at, updated_at: .updated_at, type: .type, site_admin: .site_admin, url: .html_url})' > ./data/${{ matrix.org }}-${{ needs.get-orgs.outputs.datetime }}-copilot-users.json
+
       - name: Commit and push changes
         run: |
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
           git pull
           git add ./data/*.json
-          git commit -m "Added data for ${{ matrix.org }} at ${{ steps.datetime.outputs.datetime }}"
+          git commit -m "Added data for ${{ matrix.org }} at ${{ needs.get-orgs.outputs.datetime }}"
           git push
