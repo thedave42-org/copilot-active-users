@@ -94,5 +94,4 @@ jobs:
           git config --global user.email "action@github.com"
           git add ./data/*.json
           git commit -m "Added data for ${{ matrix.org }} at $(date +%Y%m%d-%H%M%S)"
-          gh auth login --with-token <<< "${{ github.token }}"
-          gh repo push
+          git push
