@@ -93,13 +93,13 @@ jobs:
         run: |
           echo $(echo '${{ steps.call-api.outputs.response }}' | jq -j '.seats') > response.json
           cat response.json | jq -n 'reduce inputs as $in (null; . + $in)' > aggregated-response.json
-          cat  aggregated-response.json | jq -r 'map( del(.assignee) + (.assignee | with_entries(.value = .value)) ) | map({login: .login, last_activity_at: .last_activity_at, last_activity_editor: .last_activity_editor, pending_cancellation_date: .pending_cancellation_date, created_at: .created_at, updated_at: .updated_at, type: .type, site_admin: .site_admin, url: .html_url})' > ./data/${{ matrix.org }}-${{ needs.get-orgs.outputs.datetime }}-copilot-users.json
+          cat  aggregated-response.json | jq -r 'map( del(.assignee) + (.assignee | with_entries(.value = .value)) ) | map({login: .login, last_activity_at: .last_activity_at, last_activity_editor: .last_activity_editor, pending_cancellation_date: .pending_cancellation_date, created_at: .created_at, updated_at: .updated_at, type: .type, site_admin: .site_admin, url: .html_url})' > ./data/${{ needs.get-orgs.outputs.datetime }}-${{ matrix.org }}-copilot-users.json
 
       - name: Commit and push changes
         run: |
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
           git pull
-          git add ./data/*.json
+          git add ./data/${{ needs.get-orgs.outputs.datetime }}-${{ matrix.org }}-copilot-users.json
           git commit -m "Added data for ${{ matrix.org }} at ${{ needs.get-orgs.outputs.datetime }}"
           git push
