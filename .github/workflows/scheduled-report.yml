@@ -1,7 +1,7 @@
 # Create an actions workflow that uses the gh cli to call the GitHub API and retrieve the list of copilot users once a day for a specified organization
 # 1. The workflow should be triggered by a schedule event that runs every day at 00:00 UTC
 # 2. The workflow should have two jobs: the first job will retrieve a list of organizations and the second job will retrieve the list of copilot users for each organization
-# 3. The first job in the workflow is named get-orgs and should checkout the repo using the actions/checkout@v3 
+# 3. The first job in the workflow is named get-orgs and should checkout the repo using the actions/checkout@v4 
 # 4. It should retrieve the list of organizations from the file ./config/organizations.json which has the structure:
 # {
 #   "organizations" : [
@@ -10,7 +10,7 @@
 #   ]
 # }
 # 5. It should save the list of orgaizations as a matrix that can be retrieved by the second job
-# 6. The second job depends on the first job completing successfully, should be named get-user-list, and should checkout the repo using the actions/checkout@v3
+# 6. The second job depends on the first job completing successfully, should be named get-user-list, and should checkout the repo using the actions/checkout@v4
 # 7. It should use the the github cli will call the api using the command gh api --pagination -H "Accept: application/vnd.github+json"-H "X-GitHub-Api-Version: 2022-11-28" /orgs/ORG/copilot/billing/seats where ORG is a value from the matrix
 #  here is an example of how to accomplish this that needs to have ORG replaced with the value from the matrix:
 # - name: Call GitHub API
@@ -50,7 +50,7 @@ jobs:
     outputs:
       orgs: ${{ steps.set-matrix.outputs.orgs }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Get Organization list
         id: set-matrix
@@ -62,10 +62,10 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        org: ${{ needs.get-orgs.outputs.orgs }}
+        org: ${{ fromJSON(needs.get-orgs.outputs.orgs) }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Call GitHub API
         id: call-api
         env: 
