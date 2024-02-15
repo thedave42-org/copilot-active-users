@@ -34,7 +34,7 @@
 #   echo $(echo '${{ steps.call-api.outputs.response }}' | jq -j '.seats') > response.json
 #   cat response.json | jq -n 'reduce inputs as $in (null; . + $in)' > aggregated-response.json
 #   cat  aggregated-response.json | jq -r 'map( del(.assignee) + (.assignee | with_entries(.value = .value)) ) | map({login: .login, last_activity_at: .last_activity_at, last_activity_editor: .last_activity_editor, pending_cancellation_date: .pending_cancellation_date, created_at: .created_at, updated_at: .updated_at, type: .type, site_admin: .site_admin, url: .html_url})' > ./data/ORG-YYMMDD-HHmmss-copilot-users.json
-# 10. the json file created in the previous step should be checked into the repo with a comment that includes the name of the organization and the date and time the file was created
+# 10. the json file created in the previous step should be checked into the repo with a comment that includes the name of the organization and the date and time the file was created using the gh cli
 # 11. both jobs should run on ubuntu-latest
 
 name: Scheduled Report
@@ -66,6 +66,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
       - name: Call GitHub API
         id: call-api
         env: 
@@ -73,26 +74,25 @@ jobs:
         run: |
           RESPONSE=$(gh api --paginate -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /orgs/${{ matrix.org }}/copilot/billing/seats 2>&1 | tr -d '\n' || true)
           echo "response=$RESPONSE" >> "$GITHUB_OUTPUT"
+
       - name: Check API results
         uses: actions/github-script@v7.0.1
         with:
           script: |
             const script = require('./scripts/check-results-for-errors.js');
             console.log(script({github, context}));
+
       - name: Save results as file
         run: |
           echo $(echo '${{ steps.call-api.outputs.response }}' | jq -j '.seats') > response.json
           cat response.json | jq -n 'reduce inputs as $in (null; . + $in)' > aggregated-response.json
           cat  aggregated-response.json | jq -r 'map( del(.assignee) + (.assignee | with_entries(.value = .value)) ) | map({login: .login, last_activity_at: .last_activity_at, last_activity_editor: .last_activity_editor, pending_cancellation_date: .pending_cancellation_date, created_at: .created_at, updated_at: .updated_at, type: .type, site_admin: .site_admin, url: .html_url})' > ./data/${{ matrix.org }}-$(date +%Y%m%d-%H%M%S)-copilot-users.json
-      - name: Commit and push
+      
+      - name: Commit and push changes
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add ./data/${{ matrix.org }}-$(date +%Y%m%d-%H%M%S)-copilot-users.json
-          git commit -m "Add data for ${{ matrix.org }} at $(date +%Y%m%d-%H%M%S)"
-          git push
-
-      - name: Debugging with ssh
-        uses: lhotari/action-upterm@v1
-        with:
-          wait-timeout-minutes: 1
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+          git add ./data/${{ matrix.org }}-*.json
+          git commit -m "Added data for ${{ matrix.org }} at $(date +%Y%m%d-%H%M%S)"
+          gh auth login --with-token <<< "${{ github.token }}"
+          gh repo push
