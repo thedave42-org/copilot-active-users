@@ -5,3 +5,5 @@ This repository will generate a list of the current Copilot for Business users f
 To get started you can use this repository as a template and then enable the ability to run its Action workflows. (If you fork the repo, you wont be able to make your copy private.) The workflow requires a GitHub classic PAT defined as an [Actions Secret](../../settings/secrets/actions) and available to this workflow named `COPILOT_ACCESS_LIST`.  The PAT should have the permission `manage_billing:copilot`. 
 
 Once you have the secret defined, you can use the [available issue template](../../issues/new?assignees=&labels=copilot-users&projects=&template=list-active-users.yaml&title=List+Copilot+Users) to get started.  The template will prompt you for the organization name, and the creation of the issue will trigger the workflow.  A comment will be posted to the issue containing a link to a file with the user list for download within a few minutes.  If there is a problem with retrieving the list, the comment will provide an error message.
+
+### Scheduled Data Collection
