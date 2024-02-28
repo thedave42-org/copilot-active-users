@@ -65,6 +65,12 @@ jobs:
         id: datetime
         run: |
           echo "datetime=$(date +%Y%m%d-%H%M%S)" >> "$GITHUB_OUTPUT"
+          
+      - name: Setup upterm session
+        uses: lhotari/action-upterm@v1
+        with:
+          ## If no one connects after 1 minute, shut down server.
+          wait-timeout-minutes: 1
 
   get-user-list:
     needs: get-orgs
