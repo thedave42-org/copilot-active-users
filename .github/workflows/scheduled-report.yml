@@ -46,6 +46,7 @@ on:
 
 jobs:
   get-orgs:
+    name: Get list of organizations for report
     runs-on: ubuntu-latest
     outputs:
       orgs: ${{ steps.set-matrix.outputs.orgs }}
@@ -63,14 +64,9 @@ jobs:
         id: datetime
         run: |
           echo "datetime=$(date +%Y%m%d-%H%M%S)" >> "$GITHUB_OUTPUT"
-          
-      # - name: Setup upterm session
-      #   uses: lhotari/action-upterm@v1
-      #   with:
-      #     ## If no one connects after 1 minute, shut down server.
-      #     wait-timeout-minutes: 1
 
   get-user-list:
+    name: Get list of copilot users for ${{ matrix.org }}
     needs: get-orgs
     runs-on: ubuntu-latest
     strategy:
