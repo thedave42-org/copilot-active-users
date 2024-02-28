@@ -9,4 +9,4 @@ Once you have the secret defined, you can use the [available issue template](../
 ### Scheduled Data Collection
 This repo also contains a workflow that runs daily and collects user data for one or more Organizations.  The user data is stored in the `data` directory of this reposiotry in JSON format.  Files are named based on the date and time the data is collected and the name of the organization it was collected from (`YYYYMMDD-HHMMss-<org-name>-copilot-users.json`).  The report will default to using the Organization that owns the repo.  You can provide a configuration file called `config/organizations.json` to specify a different Organization or more than one Organization for the report.  And example of the JSON format is available in `config/organizations.json.example`.
 
-    Hint: If you do not want a scheduled report you can disable the workflow from the Actions tab of this repo.
+Hint: If you do not want a scheduled report you can disable the workflow from the Actions tab of this repo.
