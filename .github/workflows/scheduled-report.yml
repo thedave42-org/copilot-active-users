@@ -56,10 +56,8 @@ jobs:
 
       - name: Get Organization list
         id: set-matrix
-        env: 
-          OWNER: ${{ github.repository_owner }}
         run: |
-          echo "orgs=$(./scripts/get-org-list.sh)" >> "$GITHUB_OUTPUT"
+          echo "orgs=$(bash ./scripts/get-org-list.sh)" >> "$GITHUB_OUTPUT"
 
       - name: Set date and time
         id: datetime
