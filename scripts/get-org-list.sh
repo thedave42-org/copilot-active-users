@@ -8,7 +8,7 @@
 if [ -f ./config/organizations.json ]; then
   echo $(cat ./config/organizations.json | jq -c '.organizations')
 else
-  echo ["$GITHUB_REPOSITORY_OWNER"]
+  echo [\""$GITHUB_REPOSITORY_OWNER"\"]
 fi
 
 
