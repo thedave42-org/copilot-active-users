@@ -47,9 +47,7 @@ jobs:
                   name: label,
                   //color: 'f29513' // choose a color for the label
                 });
-              } else {
-                throw error;
-              }
+              } 
             }
           }
 
@@ -203,12 +201,26 @@ jobs:
             repo: context.repo.repo,
             body: "A step in the workflow failed. Please check the logs for more information."
           });
-          github.rest.issues.removeLabel({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: issue_number,
-              name: 'query-processing'
-          });
+          try {
+            github.rest.issues.removeLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue_number,
+                name: 'query-processing'
+            });
+          } catch (error) {
+            console.log("Error removing label: ", error);
+          }
+          try {
+            github.rest.issues.removeLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue_number,
+                name: 'query-created'
+            });
+          } catch (error) {
+            console.log("Error removing label: ", error);
+          }
           github.rest.issues.addLabels({
               owner: context.repo.owner,
               repo: context.repo.repo,
