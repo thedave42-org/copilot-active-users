@@ -24,14 +24,7 @@ jobs:
       uses: actions/github-script@v7.0.1
       with:
         script: |
-          const issue_number = context.issue.number;
-          const issue_creator = '${{ github.actor }}';
-          github.rest.issues.addAssignees({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            issue_number: issue_number,
-            assignees: [issue_creator]
-          });          
+          const issue_number = context.issue.number;    
           github.rest.issues.removeLabel({
             owner: context.repo.owner,
             repo: context.repo.repo,
