@@ -38,6 +38,7 @@ jobs:
         fi
       env:
         COPILOT_ACCESS_LIST: ${{ secrets.COPILOT_ACCESS_LIST }}
+        GH_TOKEN: ${{ github.token }}
 
     - name: Ensure labels exist
       uses: actions/github-script@v7.0.1
