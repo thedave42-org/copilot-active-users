@@ -18,7 +18,7 @@ jobs:
 
     steps:
     - name: Checkout repo
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Label Issue as query-processing
       uses: actions/github-script@v7.0.1
