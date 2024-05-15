@@ -122,7 +122,7 @@ jobs:
       with:
         script: |
           const issue_number = context.issue.number;
-          const md_table = require('fs').readFileSync('${{ steps.usage-summary.outputs.md-file }}', 'utf8');
+          const md_table = require('fs').readFileSync('${{ github.workspace }}/copilot-usage.md', 'utf8');
           github.rest.issues.createComment({
             issue_number: issue_number,
             owner: context.repo.owner,
