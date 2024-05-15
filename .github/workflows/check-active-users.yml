@@ -58,9 +58,10 @@ jobs:
           gh issue comment ${{ github.event.issue.number }} --body "The COPILOT_ACCESS_LIST secret is not set. Please set it in the repository settings."
           exit 1
         fi
-        if [[ ! $(bash .scripts/check-permissions.sh) == *"copilot"* ]]; then
-          echo "The token does not have the required permissions. Please check the permissions and try again."
-          gh issue comment ${{ github.event.issue.number }} --body "The token does not have the required permissions. Please check the permissions and try again."
+        PERMS=$(bash ./scripts/check-permissions.sh)
+        if [[ ! $PERMS == *"copilot"* ]]; then
+          echo "The token does not have the required permissions. Please check the permissions and try again.\n\tRequires: copilot\n\tPermissions: $PERMS"
+          gh issue comment ${{ github.event.issue.number }} --body  "The token does not have the required permissions. Please check the permissions and try again.\n\tRequires: copilot\n\tPermissions: $PERMS"
           exit 1
         fi
       env:
