@@ -6,7 +6,7 @@
 
 # Check if the file exists
 if [ -f ./config/organizations.json ]; then
-  echo $(cat ./config/organizations.json | jq -c '.organizations')
+  echo $(cat ./config/scheduled-report.json | jq -c '.organizations')
 else
   echo [\""$GITHUB_REPOSITORY_OWNER"\"]
 fi
