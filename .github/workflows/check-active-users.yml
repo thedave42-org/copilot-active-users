@@ -60,8 +60,9 @@ jobs:
         fi
         PERMS=$(bash ./scripts/check-permissions.sh)
         if [[ ! $PERMS == *"copilot"* ]]; then
-          echo "The token does not have the required permissions. Please check the permissions and try again.\n\tRequires: copilot\n\tPermissions: $PERMS"
-          gh issue comment ${{ github.event.issue.number }} --body  "The token does not have the required permissions. Please check the permissions and try again. Requires `copilot`, has `$PERMS`"
+          echo "The token does not have the required permissions. Please check the permissions and try again.\n\tRequires: \`copilot\`\n\tPermissions: \`$PERMS\`" >secret-error.md
+          echo $(cat secret-error.md)
+          gh issue comment ${{ github.event.issue.number }} --body-file secret-error.md
           exit 1
         fi
       env:
@@ -105,28 +106,6 @@ jobs:
         create-md-artifact: false
         create-html: false
         create-md: true
-
-    # - name: Call GitHub API
-    #   id: call-api
-    #   env: 
-    #     GH_TOKEN: ${{ secrets.COPILOT_ACCESS_LIST }}
-    #   run: |
-    #     RESPONSE=$(gh api --paginate -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /orgs/${{ steps.get-org.outputs.org }}/copilot/billing/seats 2>&1 | tr -d '\n' || true)
-    #     echo "response=$RESPONSE" >> "$GITHUB_OUTPUT"
-    
-    # - name: Check API results
-    #   uses: actions/github-script@v7.0.1
-    #   with:
-    #     script: |
-    #       const script = require('./scripts/check-results-for-errors.js');
-    #       console.log(script({github, context}));
-
-    # - name: Save results as file
-    #   run: |
-    #     echo $(echo '${{ steps.call-api.outputs.response }}' | jq -j '.seats') > response.json
-    #     cat response.json | jq -n 'reduce inputs as $in (null; . + $in)' > aggregated-response.json
-    #     cat  aggregated-response.json | jq -r 'map( del(.assignee) + (.assignee | with_entries(.value = .value)) ) | map({login: .login, last_activity_at: .last_activity_at, last_activity_editor: .last_activity_editor, pending_cancellation_date: .pending_cancellation_date, created_at: .created_at, updated_at: .updated_at, type: .type, site_admin: .site_admin, url: .html_url})' > copilot-user-list.json
-    #     cat  aggregated-response.json | jq -r 'map( del(.assignee) + (.assignee | with_entries(.value = .value)) ) | map({login: .login, last_activity_at: .last_activity_at, last_activity_editor: .last_activity_editor, pending_cancellation_date: .pending_cancellation_date, created_at: .created_at, updated_at: .updated_at, type: .type, site_admin: .site_admin, url: .html_url}) | (.[0] | keys_unsorted) as $keys | $keys, map([.[ $keys[] ]])[] | @csv' > copilot-user-list.csv
     
     - name: Upload response file as artifact
       uses: actions/upload-artifact@v4.3.1
@@ -149,22 +128,6 @@ jobs:
             body: `Copilot usage data has been retrieved.  You can download a pdf [here](${{ steps.uploaded-artifact.outputs.artifact-url }}).`,
           });
 
-    # - name: Read CSV
-    #   id: csv
-    #   uses: juliangruber/read-file-action@v1
-    #   with:
-    #     path: copilot-user-list.csv
-        
-    # - name: Create MD
-    #   uses: petems/csv-to-md-table-action@v3.0.0
-    #   id: csv-table-output
-    #   with:
-    #     csvinput: ${{ steps.csv.outputs.content }} 
-    
-    # - name: Save MD as file
-    #   run: |
-    #     echo "${{ steps.usage-summary.outputs.job-summary }}" > copilot-user-list.md
-        
     - name: Post user list as comment
       uses: actions/github-script@v7.0.1
       with:
