@@ -65,7 +65,7 @@ jobs:
           echo "| Requires | Has |" >> secret-error.md
           echo "| --- | --- |" >> secret-error.md
           echo "| copilot | $PERMS |" >> secret-error.md
-          echo $(cat secret-error.md) >> $GITHBUB_STEP_SUMMARY
+          echo $(cat secret-error.md) >> $GITHUB_STEP_SUMMARY
           gh issue comment ${{ github.event.issue.number }} --body-file secret-error.md
           exit 1
         fi
