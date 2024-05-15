@@ -58,7 +58,7 @@ jobs:
           gh issue comment ${{ github.event.issue.number }} --body "The COPILOT_ACCESS_LIST secret is not set. Please set it in the repository settings."
           exit 1
         fi
-        PERMS=$(bash ./scripts/check-permissions.sh)
+        PERMS=$(bash ./scripts/check-permissions.sh | tr -d '\n')
         if [[ ! $PERMS == *"copilot"* ]]; then
           echo "The token does not have the required permissions. Please check the permissions and try again." >secret-error.md
           echo "" >> secret-error.md
