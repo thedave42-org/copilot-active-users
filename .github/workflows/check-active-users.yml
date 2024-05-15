@@ -55,6 +55,8 @@ jobs:
         name: copilot-usage
         create-pdf-artifact: false
         create-md-artifact: false
+        create-html: false
+        create-md: true
 
     # - name: Call GitHub API
     #   id: call-api
