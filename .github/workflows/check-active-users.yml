@@ -60,7 +60,8 @@ jobs:
         fi
         PERMS=$(bash ./scripts/check-permissions.sh)
         if [[ ! $PERMS == *"copilot"* ]]; then
-          echo "The token does not have the required permissions. Please check the permissions and try again. >secret-error.md
+          echo "The token does not have the required permissions. Please check the permissions and try again." >secret-error.md
+          echo "" >> secret-error.md
           echo "| Requires | Has |" >> secret-error.md
           echo "| --- | --- |" >> secret-error.md
           echo "| copilot | $PERMS |" >> secret-error.md
