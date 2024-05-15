@@ -16,6 +16,10 @@ jobs:
     if: github.event.issue.title == 'List Copilot Users'
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: read
+      issues: write
+
     steps:
     - name: Checkout repo
       uses: actions/checkout@v4
