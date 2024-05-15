@@ -97,7 +97,7 @@ jobs:
         ORG=$(echo "${{ github.event.issue.body }}" | awk '/### Organization Name/{getline; getline; print}')
         echo "org=$ORG" >> "$GITHUB_OUTPUT"
 
-    - uses: austenstone/copilot-usage@v2
+    - uses: austenstone/copilot-usage@main
       with:
         github-token: ${{ secrets.COPILOT_ACCESS_LIST }}
         organization: ${{ steps.get-org.outputs.org }}
