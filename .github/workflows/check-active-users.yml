@@ -36,6 +36,8 @@ jobs:
           gh issue comment ${{ github.event.issue.number }} --body "The token does not have the required permissions. Please check the permissions and try again."
           exit 1
         fi
+      env:
+        COPILOT_ACCESS_LIST: ${{ secrets.COPILOT_ACCESS_LIST }}
 
     - name: Ensure labels exist
       uses: actions/github-script@v7.0.1
