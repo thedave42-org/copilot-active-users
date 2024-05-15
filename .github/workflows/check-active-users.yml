@@ -96,7 +96,7 @@ jobs:
             issue_number: issue_number,
             owner: context.repo.owner,
             repo: context.repo.repo,
-            body: `User list has been successfully retrieved.  You download both the CSV and JSON format of the data [here](${{ steps.uploaded-artifact.outputs.artifact-url }}).`,
+            body: `Copilot usage data has been retrieved.  You can download a pdf [here](${{ steps.uploaded-artifact.outputs.artifact-url }}).`,
           });
 
     # - name: Read CSV
@@ -111,21 +111,21 @@ jobs:
     #   with:
     #     csvinput: ${{ steps.csv.outputs.content }} 
     
-    - name: Save MD as file
-      run: |
-        echo "${{ steps.usage-summary.outputs.job-summary }}" > copilot-user-list.md
+    # - name: Save MD as file
+    #   run: |
+    #     echo "${{ steps.usage-summary.outputs.job-summary }}" > copilot-user-list.md
         
     - name: Post user list as comment
       uses: actions/github-script@v7.0.1
       with:
         script: |
           const issue_number = context.issue.number;
-          const md_table = require('fs').readFileSync('copilot-user-list.md');
+          //const md_table = require('fs').readFileSync('copilot-user-list.md');
           github.rest.issues.createComment({
             issue_number: issue_number,
             owner: context.repo.owner,
             repo: context.repo.repo,
-            body: `<details><summary>Click to view the report.\nComment body could be truncated based on 10k limit.</summary>\n\n${md_table}\n\n</details>`
+            body: `<details><summary>Click to view the report.\nComment body could be truncated based on 10k limit.</summary>\n\n${{ steps.usage-summary.outputs.job-summary }}\n\n</details>`
           }); 
           github.rest.issues.removeLabel({
               owner: context.repo.owner,
