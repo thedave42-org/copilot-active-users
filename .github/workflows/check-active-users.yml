@@ -56,7 +56,7 @@ jobs:
         github-token: ${{ secrets.COPILOT_ACCESS_LIST }}
         organization: ${{ steps.get-org.outputs.org }}
 
-    - uses: austenstone/job-summary@v2.0
+    - uses: austenstone/job-summary@1e5a6caee47baca7b15fbb06709fd8e404258348
       id: usage-summary
       with:
         name: copilot-usage
