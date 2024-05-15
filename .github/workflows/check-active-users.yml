@@ -61,7 +61,7 @@ jobs:
         PERMS=$(bash ./scripts/check-permissions.sh)
         if [[ ! $PERMS == *"copilot"* ]]; then
           echo "The token does not have the required permissions. Please check the permissions and try again.\n\tRequires: copilot\n\tPermissions: $PERMS"
-          gh issue comment ${{ github.event.issue.number }} --body  "The token does not have the required permissions. Please check the permissions and try again.\n\tRequires: copilot\n\tPermissions: $PERMS"
+          gh issue comment ${{ github.event.issue.number }} --body  "The token does not have the required permissions. Please check the permissions and try again. Requires `copilot`, has `$PERMS`"
           exit 1
         fi
       env:
