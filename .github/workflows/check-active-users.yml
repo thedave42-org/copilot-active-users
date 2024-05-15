@@ -120,12 +120,12 @@ jobs:
       with:
         script: |
           const issue_number = context.issue.number;
-          //const md_table = require('fs').readFileSync('copilot-user-list.md');
+          const md_table = require('fs').readFileSync('${{ steps.usage-summary.outputs.md-file }}', 'utf8');
           github.rest.issues.createComment({
             issue_number: issue_number,
             owner: context.repo.owner,
             repo: context.repo.repo,
-            body: `<details><summary>Click to view the report.\nComment body could be truncated based on 10k limit.</summary>\n\n${{ steps.usage-summary.outputs.job-summary }}\n\n</details>`
+            body: `<details><summary>Click to view the report.\nComment body could be truncated based on 10k limit.</summary>\n\n${md_table}\n\n</details>`
           }); 
           github.rest.issues.removeLabel({
               owner: context.repo.owner,
